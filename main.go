@@ -14,28 +14,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer source.Close()
 
 	output, err := outputs.New()
 	if err != nil {
 		panic(err)
 	}
+	defer output.Close()
 
-	processing := processing.New()
+	process := processing.New(source)
+	defer process.Close()
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 
 	for {
 		select {
-		case err := <-source.Errors():
+		case err := <-process.Errors():
 			log.Println(err)
-		case rec := <-source.Records():
-			if out, err := processing.Process(rec); out != nil {
-				err2 := output.Output(out)
-				if err2 != nil {
-					log.Println(err2)
-				}
-			} else if err != nil {
+		case out := <-process.Outputs():
+			err := output.Output(out)
+			if err != nil {
 				log.Println(err)
 			}
 		case <-signals:

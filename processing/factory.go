@@ -1,14 +1,16 @@
 package processing
 
 import (
-	"github.com/butzist/challenge/sources"
 	"github.com/butzist/challenge/outputs"
+	"github.com/butzist/challenge/sources"
 )
 
 type Processing interface {
-	Process(record sources.Record) (*outputs.OutputStruct, error)
+	Errors() <-chan error
+	Outputs() <-chan *outputs.OutputStruct
+	Close() error
 }
 
-func New() Processing {
-	return NewSimple()
+func New(source sources.Source) Processing {
+	return NewSimple(source)
 }

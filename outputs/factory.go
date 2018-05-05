@@ -7,6 +7,7 @@ type OutputStruct struct {
 
 type Output interface {
 	Output(out *OutputStruct) error
+	Close() error
 }
 
 func New() (Output, error) {

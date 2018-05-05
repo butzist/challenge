@@ -22,3 +22,7 @@ func (*Console) Output(out *OutputStruct) error {
 
 	return nil
 }
+
+func (*Console) Close() error {
+	return nil
+}
