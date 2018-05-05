@@ -7,6 +7,8 @@ import (
 	"fmt"
 )
 
+// Simple timestamp processing requires strictly ordered timestamps but on the other hand does not
+// require system time to be synced with the producer i.e. can be used for importing historical data.
 type Simple struct {
 	currentMinute uint64
 	counter counters.Counter
