@@ -23,7 +23,7 @@ func (s *Simple) Process(record sources.Record) (*outputs.OutputStruct, error) {
 	} else if s.currentMinute < minute {
 		s.currentMinute = minute
 		if s.counter != nil {
-			out := &outputs.OutputStruct{s.counter.Count(), nil}
+			out := &outputs.OutputStruct{s.counter.Count(), s.counter.Raw()}
 			s.counter = counters.New()
 			return out, nil
 		} else {
