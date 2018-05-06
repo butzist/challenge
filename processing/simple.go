@@ -48,7 +48,6 @@ func (s *Simple) run(source sources.Source) {
 			}
 		case <-s.quit:
 			return
-
 		}
 	}
 }

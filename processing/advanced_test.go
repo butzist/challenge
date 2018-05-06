@@ -13,7 +13,7 @@ func newTestee() (Processing, *mockSource, *mockClock) {
 	c := &mockClock{after: make(chan time.Time)}
 	c.now = 6000000
 
-	p := newAdvancedWithClock(s, c)
+	p := newAdvancedWithClock(s, "exact", c)
 	p.(*Advanced).currentMinute = c.now / 60
 
 	return p, s, c

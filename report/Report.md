@@ -21,7 +21,16 @@
 
 ### Setup
 
+For benchmarking I used Golang's built-in benchmarking infrastructure and added code for generating
+a CPU profile. I decided to only benchmark the input parsing, processing, counting, and output stage,
+and in particular not include the possible overhead from Kafka.
+
 ### Results
+
+Overall, we achieved an ingestion performance of 200k records/s, or 8MiB/s. This corresponds to about 10M records
+per minute and does not seem to be I/O bound, i.e. I would expect Kafka being able to deliver higher data rates.
+
+![ggprof graph](./profile.svg)
 
 ### Improvements
 
