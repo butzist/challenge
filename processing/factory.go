@@ -11,6 +11,13 @@ type Processing interface {
 	Close() error
 }
 
-func New(source sources.Source) Processing {
-	return NewSimple(source)
+func New(kind string, source sources.Source, counterType string) Processing {
+	switch kind {
+	case "simple":
+		return NewSimple(source, counterType)
+	case "advanced":
+		return NewAdvanced(source, counterType)
+	default:
+		panic("unknown counter type")
+	}
 }

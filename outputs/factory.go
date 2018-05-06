@@ -10,6 +10,12 @@ type Output interface {
 	Close() error
 }
 
-func New() (Output, error) {
-	return NewConsole()
-}
+func New(kind string) (Output, error) {
+	switch kind {
+	case "console":
+		return NewConsole()
+	case "kafka":
+		panic("NYI")
+	default:
+		panic("unknown output type")
+	}}

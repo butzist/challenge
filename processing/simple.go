@@ -15,10 +15,11 @@ type Simple struct {
 	errors chan error
 	outputs chan *outputs.OutputStruct
 	quit chan int
+	counterType string
 }
 
-func NewSimple(source sources.Source) Processing {
-	s := &Simple{0, nil, make(chan error), make(chan *outputs.OutputStruct), make(chan int)}
+func NewSimple(source sources.Source, counterType string) Processing {
+	s := &Simple{0, nil, make(chan error), make(chan *outputs.OutputStruct), make(chan int), counterType}
 	go s.run(source)
 	return s
 }
@@ -36,10 +37,10 @@ func (s *Simple) run(source sources.Source) {
 				s.currentMinute = minute
 				if s.counter != nil {
 					out := &outputs.OutputStruct{Count: s.counter.Count(), Raw: s.counter.Raw()}
-					s.counter = counters.New()
+					s.counter = counters.New(s.counterType)
 					s.outputs <- out
 				} else {
-					s.counter = counters.New()
+					s.counter = counters.New(s.counterType)
 				}
 			} else {
 				s.errors <- fmt.Errorf("out-of-order timestamp %d", uint64(record.Timestamp))

@@ -19,15 +19,16 @@ type Advanced struct {
 	outputs chan *outputs.OutputStruct
 	quit chan int
 	clock clock
+	counterType string
 }
 
-func NewAdvanced(source sources.Source) Processing {
-	s := newAdvancedWithClock(source, &realClock{})
+func NewAdvanced(source sources.Source, counterType string) Processing {
+	s := newAdvancedWithClock(source, counterType, &realClock{})
 	return s
 }
 
-func newAdvancedWithClock(source sources.Source, clock clock) Processing {
-	s := &Advanced{uint64(time.Now().Unix() / 60), counters.New(), counters.New(), make(chan error), make(chan *outputs.OutputStruct), make(chan int), clock}
+func newAdvancedWithClock(source sources.Source, counterType string, clock clock) Processing {
+	s := &Advanced{uint64(time.Now().Unix() / 60), counters.New(counterType), counters.New(counterType), make(chan error), make(chan *outputs.OutputStruct), make(chan int), clock, counterType}
 	go s.run(source)
 	return s
 }
@@ -41,7 +42,7 @@ func (s *Advanced) run(source sources.Source) {
 		if currentMinute > s.currentMinute {
 			s.currentMinute = currentTime / 60
 			out := &outputs.OutputStruct{Count: s.counter.Count(), Raw: s.counter.Raw()}
-			s.nextCounter,s.counter = counters.New(),s.nextCounter
+			s.nextCounter,s.counter = counters.New(s.counterType),s.nextCounter
 			s.outputs <- out
 		}
 
