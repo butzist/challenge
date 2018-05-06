@@ -106,7 +106,17 @@ The output data (count and raw aggregatable value) can be partitioned by timesta
 for efficient aggregation.
 
 ### Probabilistic cardinality estimation
-TODO error
+ If the user is willing to trade memory usage for accuracy,
+then a probabilistic cardinality estimation is a good choice.
+
+I implemented a HyperLogLog++ based counter quickly for comparison with the set implementation.
+
+According to the authors, the error at high sample numbers should be around 2%. The overall performance is unfortunately only
+at 1/3 of the set implementation (70k records/s or 3 MiB/s) but the memory usage is minimal (1.5 kiB). To be investigated
+further how to improve the runtime.
+
+Another benefit of HLL, is that input data does not have to partitioned by uid. Also the raw aggregatable value is small
+and can be easily aggregated.
 
 ### Error recovery
 I decided to output not only the counts, but also the raw information of unique users. This

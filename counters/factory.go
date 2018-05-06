@@ -13,7 +13,7 @@ func New(kind string) Counter {
 	case "exact":
 		return NewSet()
 	case "probabilistic":
-		panic("NYI")
+		return NewHll()
 	default:
 		panic("unknown counter type")
 	}
