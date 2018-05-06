@@ -34,9 +34,10 @@ func (s *Simple) run(source sources.Source) {
 			if s.currentMinute == minute {
 				s.counter.Add(record.Uid)
 			} else if s.currentMinute < minute {
+				outputTimestamp := s.currentMinute * 60
 				s.currentMinute = minute
 				if s.counter != nil {
-					out := &outputs.OutputStruct{Count: s.counter.Count(), Raw: s.counter.Raw()}
+					out := &outputs.OutputStruct{Timestamp: outputTimestamp, Count: s.counter.Count(), Raw: s.counter.Raw()}
 					s.counter = counters.New(s.counterType)
 					s.outputs <- out
 				} else {

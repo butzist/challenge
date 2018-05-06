@@ -40,8 +40,9 @@ func (s *Advanced) run(source sources.Source) {
 
 		// send data for last minute if 5 seconds after next minute passed
 		if currentMinute > s.currentMinute {
+			outputTimestamp := s.currentMinute * 60
 			s.currentMinute = currentTime / 60
-			out := &outputs.OutputStruct{Count: s.counter.Count(), Raw: s.counter.Raw()}
+			out := &outputs.OutputStruct{Timestamp: outputTimestamp, Count: s.counter.Count(), Raw: s.counter.Raw()}
 			s.nextCounter,s.counter = counters.New(s.counterType),s.nextCounter
 			s.outputs <- out
 		}
