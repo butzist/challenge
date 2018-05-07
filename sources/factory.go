@@ -7,7 +7,7 @@ import (
 
 type Source interface {
 	Errors() <-chan error
-	Records() <-chan Record
+	Records() <-chan *Record
 	Close() error
 }
 

@@ -9,7 +9,7 @@ import (
 )
 
 func newTestee() (Processing, *mockSource, *mockClock) {
-	s := &mockSource{make(chan error), make(chan sources.Record)}
+	s := &mockSource{make(chan error), make(chan *sources.Record)}
 	c := &mockClock{after: make(chan time.Time)}
 	c.now = 6000000
 
@@ -23,10 +23,10 @@ func TestInOrder(t *testing.T) {
 	p, s, c := newTestee()
 	defer p.Close()
 
-	s.records <- sources.Record{"a", 6000000}
-	s.records <- sources.Record{"b", 6000059}
-	s.records <- sources.Record{"c", 6000059}
-	s.records <- sources.Record{"d", 6000060}
+	s.records <- &sources.Record{"a", 6000000}
+	s.records <- &sources.Record{"b", 6000059}
+	s.records <- &sources.Record{"c", 6000059}
+	s.records <- &sources.Record{"d", 6000060}
 
 	time.Sleep(1)
 
@@ -65,8 +65,8 @@ func TestOutOfOrder(t *testing.T) {
 
 	time.Sleep(1)
 
-	s.records <- sources.Record{"a", 6000059}
-	s.records <- sources.Record{"b", 6000058}
+	s.records <- &sources.Record{"a", 6000059}
+	s.records <- &sources.Record{"b", 6000058}
 
 	time.Sleep(1)
 
@@ -88,15 +88,15 @@ func TestOutOfOrderError(t *testing.T) {
 
 	time.Sleep(1)
 
-	s.records <- sources.Record{"a", 6000000}
-	s.records <- sources.Record{"b", 6000119}
+	s.records <- &sources.Record{"a", 6000000}
+	s.records <- &sources.Record{"b", 6000119}
 
 	assertNoErrorsReceived(p, t, "valid timestamps not accepted")
 
-	s.records <- sources.Record{"b", 6000120}
+	s.records <- &sources.Record{"b", 6000120}
 	assertErrorReceived(p, t, "no error received")
 
-	s.records <- sources.Record{"b", 5999999}
+	s.records <- &sources.Record{"b", 5999999}
 	assertErrorReceived(p, t, "no error received")
 }
 
@@ -143,14 +143,14 @@ func assertErrorReceived(p Processing, t *testing.T, msg string) {
 
 type mockSource struct {
 	errors chan error
-	records chan sources.Record
+	records chan *sources.Record
 }
 
 func (m *mockSource) Errors() <-chan error {
 	return m.errors
 }
 
-func (m *mockSource) Records() <-chan sources.Record {
+func (m *mockSource) Records() <-chan *sources.Record {
 	return m.records
 }
 

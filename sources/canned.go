@@ -11,7 +11,7 @@ import (
 type Canned struct {
 	content *gzip.Reader
 	errors chan error
-	records chan Record
+	records chan *Record
 }
 
 func NewCanned() (Source, error) {
@@ -27,7 +27,7 @@ func NewCanned() (Source, error) {
 		return nil, err
 	}
 
-	c := &Canned{content, make(chan error), make(chan Record)}
+	c := &Canned{content, make(chan error), make(chan *Record)}
 	go c.run()
 
 	return c, nil
@@ -54,7 +54,7 @@ func (c *Canned) Errors() <-chan error {
 	return c.errors
 }
 
-func (c *Canned) Records() <-chan Record {
+func (c *Canned) Records() <-chan *Record {
 	return c.records
 }
 

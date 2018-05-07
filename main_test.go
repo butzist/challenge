@@ -14,14 +14,14 @@ import (
 )
 
 type benchmarkSource struct {
-	records chan sources.Record
+	records chan *sources.Record
 }
 
 func (benchmarkSource) Errors() <-chan error {
 	return make(chan error)
 }
 
-func (b *benchmarkSource) Records() <-chan sources.Record {
+func (b *benchmarkSource) Records() <-chan *sources.Record {
 	return b.records
 }
 
@@ -44,7 +44,7 @@ func BenchmarkSetCounter(b *testing.B) {
 	}
 	b.SetBytes(int64(dataLen/len(lines)))
 
-	source := &benchmarkSource{make(chan sources.Record)}
+	source := &benchmarkSource{make(chan *sources.Record)}
 	process := processing.New("simple", source, "exact")
 	defer process.Close()
 	quit := make(chan int)
@@ -82,7 +82,7 @@ func BenchmarkSetCounter(b *testing.B) {
 	}
 
 	last := sources.Record{Timestamp:ts+65, Uid:"last"}
-	source.records <- last
+	source.records <- &last
 
 	fmt.Println(<-process.Outputs())
 }

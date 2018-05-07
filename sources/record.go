@@ -7,7 +7,8 @@ type Record struct {
 	Timestamp uint64 `json:"ts"`
 }
 
-func ParseRecord(raw []byte) (r Record, err error) {
+func ParseRecord(raw []byte) (r *Record, err error) {
+	r = &Record{}
 	err = json.Unmarshal(raw, &r)
 	return
 }

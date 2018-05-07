@@ -9,7 +9,7 @@ type Kafka struct {
 	consumer sarama.PartitionConsumer
 	quit chan int
 	errors chan error
-	records chan Record
+	records chan *Record
 }
 
 func NewKafka(brokers []string, topic string, partition int32) (Source, error) {
@@ -26,7 +26,7 @@ func NewKafka(brokers []string, topic string, partition int32) (Source, error) {
 		return nil, err
 	}
 
-	k := &Kafka{master, consumer, make(chan int), make(chan error), make(chan Record)}
+	k := &Kafka{master, consumer, make(chan int), make(chan error), make(chan *Record)}
 	go k.run()
 
 	return k, nil
@@ -54,7 +54,7 @@ func (k *Kafka) Errors() <-chan error {
 	return k.errors
 }
 
-func (k *Kafka) Records() <-chan Record {
+func (k *Kafka) Records() <-chan *Record {
 	return k.records
 }
 
